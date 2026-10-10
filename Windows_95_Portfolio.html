@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Windows 95 Edition</title>
+    <!-- Tailwind CSS for visual utility helpers -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for classic icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @font-face {
+            font-family: 'MS Sans Serif';
+            src: url('https://fonts.cdnfonts.com/s/15008/MS%20Sans%20Serif.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --win-bg: #008080;
+            --win-gray: #c0c0c0;
+            --win-gray-light: #ffffff;
+            --win-gray-mid: #dfdfdf;
+            --win-gray-dark: #808080;
+            --win-gray-darkest: #000000;
+            --win-blue: #000080;
+            --win-blue-light: #1084d0;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            background-color: var(--win-bg);
+            font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif;
+            font-size: 11px;
+            overflow: hidden;
+            color: #000000;
+        }
+
+        /* Classic Win95 Outset Bevel */
+        .outset-bevel {
+            border-top: 2px solid var(--win-gray-light);
+            border-left: 2px solid var(--win-gray-light);
+            border-right: 2px solid var(--win-gray-darkest);
+            border-bottom: 2px solid var(--win-gray-darkest);
+            box-shadow: inset 1px 1px 0px var(--win-gray-mid), inset -1px -1px 0px var(--win-gray-dark);
+            background-color: var(--win-gray);
+        }
+
+        /* Classic Win95 Inset Bevel */
+        .inset-bevel {
+            border-top: 2px solid var(--win-gray-darkest);
+            border-left: 2px solid var(--win-gray-darkest);
+            border-right: 2px solid var(--win-gray-light);
+            border-bottom: 2px solid var(--win-gray-light);
+            box-shadow: inset 1px 1px 0px var(--win-gray-dark), inset -1px -1px 0px var(--win-gray-mid);
+            background-color: #ffffff;
+        }
+
+        /* Classic Button Styling */
+        .btn-win {
+            background-color: var(--win-gray);
+            border-top: 2px solid var(--win-gray-light);
+            border-left: 2px solid var(--win-gray-light);
+            border-right: 2px solid var(--win-gray-darkest);
+            border-bottom: 2px solid var(--win-gray-darkest);
+            box-shadow: inset 1px 1px 0px var(--win-gray-mid), inset -1px -1px 0px var(--win-gray-dark);
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn-win:active, .btn-win.active {
+            border-top: 2px solid var(--win-gray-darkest);
+            border-left: 2px solid var(--win-gray-darkest);
+            border-right: 2px solid var(--win-gray-light);
+            border-bottom: 2px solid var(--win-gray-light);
+            box-shadow: inset 1px 1px 0px var(--win-gray-dark), inset -1px -1px 0px var(--win-gray-mid);
+            padding: 4px 7px 2px 9px;
+        }
+
+        /* Desktop Grid */
+        #desktop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 30px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 16px;
+        }
+
+        /* Desktop Icons */
+        .desktop-icon {
+            width: 76px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            cursor: pointer;
+            border: 1px transparent dotted;
+            color: #ffffff;
+            text-shadow: 1px 1px 1px #000000;
+        }
+
+        .desktop-icon:hover, .desktop-icon.selected {
+            background-color: rgba(0, 0, 128, 0.4);
+            border-color: #ffffff;
+        }
+
+        .desktop-icon i {
+            font-size: 28px;
+            margin-bottom: 6px;
+            filter: drop-shadow(1px 1px 0px #000000);
+        }
+
+        .desktop-icon span {
+            text-align: center;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        /* Window Container Styling */
+        .window {
+            position: absolute;
+            background-color: var(--win-gray);
+            min-width: 280px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .window-header {
+            background: linear-gradient(90deg, var(--win-blue), var(--win-blue-light));
+            color: #ffffff;
+            padding: 3px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            cursor: move;
+        }
+
+        .window.inactive .window-header {
+            background: linear-gradient(90deg, var(--win-gray-dark), #a0a0a0);
+            color: #c0c0c0;
+        }
+
+        .window-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-control-btn {
+            width: 16px;
+            height: 14px;
+            font-size: 9px;
+            line-height: 10px;
+            padding: 0;
+            font-weight: bold;
+        }
+
+        .window-body {
+            flex: 1;
+            padding: 8px;
+            overflow: auto;
+            background-color: var(--win-gray);
+        }
+
+        /* Taskbar */
+        #taskbar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background-color: var(--win-gray);
+            border-top: 2px solid var(--win-gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2px 3px;
+            z-index: 9999;
+        }
+
+        #start-btn {
+            font-weight: bold;
+            height: 24px;
+            padding: 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .taskbar-tasks {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+            margin: 0 6px;
+            overflow-x: auto;
+        }
+
+        .taskbar-item {
+            height: 24px;
+            min-width: 110px;
+            max-width: 160px;
+            justify-content: flex-start;
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #system-tray {
+            height: 24px;
+            padding: 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        /* Start Menu */
+        #start-menu {
+            position: absolute;
+            bottom: 30px;
+            left: 2px;
+            width: 210px;
+            background-color: var(--win-gray);
+            z-index: 10000;
+            display: none;
+            flex-direction: row;
+        }
+
+        .start-sidebar {
+            width: 26px;
+            background: linear-gradient(0deg, var(--win-blue), var(--win-blue-light));
+            color: #ffffff;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            padding: 8px 4px;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .start-items {
+            flex: 1;
+            padding: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .start-item {
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #000000;
+        }
+
+        .start-item:hover {
+            background-color: var(--win-blue);
+            color: #ffffff;
+        }
+
+        .start-divider {
+            height: 1px;
+            border-top: 1px solid var(--win-gray-dark);
+            border-bottom: 1px solid var(--win-gray-light);
+            margin: 3px 1px;
+        }
+
+        /* Form Inputs */
+        input[type="text"], input[type="email"], textarea, select {
+            background-color: #ffffff;
+            border-top: 2px solid var(--win-gray-darkest);
+            border-left: 2px solid var(--win-gray-darkest);
+            border-right: 2px solid var(--win-gray-light);
+            border-bottom: 2px solid var(--win-gray-light);
+            padding: 4px;
+            font-family: inherit;
+            font-size: 11px;
+            outline: none;
+            width: 100%;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        /* Minesweeper Grid */
+        .ms-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 22px);
+            gap: 1px;
+            background-color: var(--win-gray-dark);
+            padding: 2px;
+        }
+
+        .ms-cell {
+            width: 22px;
+            height: 22px;
+            background-color: var(--win-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .ms-cell.revealed {
+            border: 1px solid #a0a0a0;
+            background-color: #d1d1d1;
+            box-shadow: none;
+        }
+
+        /* CRT Turn Off Effect */
+        @keyframes crtOff {
+            0% { transform: scale(1, 1); filter: brightness(1); }
+            50% { transform: scale(1, 0.005); filter: brightness(5); }
+            100% { transform: scale(0, 0); filter: brightness(0); }
+        }
+
+        .crt-shutdown {
+            animation: crtOff 0.6s forwards cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 14px;
+            height: 14px;
+            background-color: var(--win-gray-mid);
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--win-gray);
+            border-top: 2px solid var(--win-gray-light);
+            border-left: 2px solid var(--win-gray-light);
+            border-right: 2px solid var(--win-gray-darkest);
+            border-bottom: 2px solid var(--win-gray-darkest);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="desktop">
+        <div class="desktop-icon" onclick="openWindow('win-about')" ondblclick="openWindow('win-about')">
+            <i class="fa-solid fa-desktop text-blue-300"></i>
+            <span>About Me</span>
+        </div>
+
+        <div class="desktop-icon" onclick="openWindow('win-projects')" ondblclick="openWindow('win-projects')">
+            <i class="fa-solid fa-folder-open text-yellow-400"></i>
+            <span>Projects</span>
+        </div>
+
+        <div class="desktop-icon" onclick="openWindow('win-skills')" ondblclick="openWindow('win-skills')">
+            <i class="fa-solid fa-microchip text-teal-300"></i>
+            <span>Skills.exe</span>
+        </div>
+
+        <div class="desktop-icon" onclick="openWindow('win-contact')" ondblclick="openWindow('win-contact')">
+            <i class="fa-solid fa-envelope text-red-400"></i>
+            <span>Contact</span>
+        </div>
+
+        <div class="desktop-icon" onclick="openWindow('win-resume')" ondblclick="openWindow('win-resume')">
+            <i class="fa-solid fa-file-lines text-gray-200"></i>
+            <span>Resume.txt</span>
+        </div>
+
+        <div class="desktop-icon" onclick="openWindow('win-notepad')" ondblclick="openWindow('win-notepad')">
+            <i class="fa-solid fa-file-pen text-blue-200"></i>
+            <span>Notepad</span>
+        </div>
+
+        <div class="desktop-icon" onclick="openWindow('win-minesweeper')" ondblclick="openWindow('win-minesweeper')">
+            <i class="fa-solid fa-bomb text-gray-800"></i>
+            <span>Minesweeper</span>
+        </div>
+
+        <div class="desktop-icon" onclick="openWindow('win-recycle')" ondblclick="openWindow('win-recycle')">
+            <i class="fa-solid fa-trash-can text-gray-300"></i>
+            <span>Recycle Bin</span>
+        </div>
+    </div>
+
+
+    <!-- WINDOW: ABOUT ME -->
+    <div id="win-about" class="window outset-bevel" style="top: 30px; left: 40px; width: 480px; height: 380px; display: flex;">
+        <div class="window-header">
+            <div class="window-title">
+                <i class="fa-solid fa-desktop"></i>
+                <span>About Me - System Properties</span>
+            </div>
+            <div class="window-controls">
+                <button class="btn-win window-control-btn" onclick="minimizeWindow('win-about')">_</button>
+                <button class="btn-win window-control-btn" onclick="maximizeWindow('win-about')">□</button>
+                <button class="btn-win window-control-btn" onclick="closeWindow('win-about')">✕</button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="flex gap-4 mb-4 items-center p-2 inset-bevel bg-gray-100">
+                <div class="w-20 h-20 bg-gray-300 inset-bevel flex items-center justify-center shrink-0 overflow-hidden">
+                    <i class="fa-solid fa-user-astronaut text-4xl text-blue-900"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-bold text-blue-900">Alex Developer</h2>
+                    <p class="font-bold text-gray-700">Full-Stack Engineer &amp; Retro Tech Lover</p>
+                    <p class="text-gray-600">System Version: 1995.2.0 (Build 950)</p>
+                    <p class="text-emerald-700 font-bold"><i class="fa-solid fa-circle text-xs"></i> System Status: Ready for Hire</p>
+                </div>
+            </div>
+
+            <div class="outset-bevel p-3 mb-3">
+                <h3 class="font-bold mb-1 border-b border-gray-400 pb-1"><i class="fa-solid fa-circle-info"></i> Developer Overview</h3>
+                <p class="mt-2 leading-relaxed">
+                    Hello! I build clean, scalable web applications, responsive user interfaces, and robust backend APIs. Passionate about retro designs, web architecture, and creating fun user experiences.
+                </p>
+            </div>
+
+            <div class="outset-bevel p-3">
+                <h3 class="font-bold mb-1 border-b border-gray-400 pb-1"><i class="fa-solid fa-sliders"></i> Hardware Specs</h3>
+                <ul class="list-disc list-inside space-y-1 mt-2">
+                    <td><strong>Core Tech:</strong> JavaScript, React, Node.js, Python, Tailwind</td>
+                    <td><strong>Experience:</strong> 5+ Years Full-Stack Engineering</td>
+                    <td><strong>Location:</strong> San Francisco, CA (Remote Friendly)</td>
+                    <td><strong>RAM:</strong> Infinite Passion for Coding</td>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINDOW: PROJECTS -->
+    <div id="win-projects" class="window outset-bevel" style="top: 60px; left: 100px; width: 520px; height: 420px; display: none;">
+        <div class="window-header">
+            <div class="window-title">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>C:\Projects\Explorer</span>
+            </div>
+            <div class="window-controls">
+                <button class="btn-win window-control-btn" onclick="minimizeWindow('win-projects')">_</button>
+                <button class="btn-win window-control-btn" onclick="maximizeWindow('win-projects')">□</button>
+                <button class="btn-win window-control-btn" onclick="closeWindow('win-projects')">✕</button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="mb-3 p-1 inset-bevel bg-white flex items-center gap-2">
+                <span class="font-bold pl-1">Address:</span>
+                <input type="text" value="C:\MyDocuments\Portfolio\Projects" readonly class="border-none text-xs">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="outset-bevel p-3 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 font-bold text-blue-900 mb-1">
+                            <i class="fa-solid fa-chart-line text-lg"></i>
+                            <span>SaaS Telemetry App</span>
+                        </div>
+                        <p class="text-gray-700 mb-2">Real-time metrics dashboard featuring WebSocket updates and chart visualizations.</p>
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            <span class="bg-blue-800 text-white px-1 text-xs">React</span>
+                            <span class="bg-teal-700 text-white px-1 text-xs">TypeScript</span>
+                        </div>
+                    </div>
+                    <button class="btn-win w-full mt-2" onclick="playBeep(); alert('Launching SaaS Telemetry App Demo...');">
+                        <i class="fa-solid fa-terminal"></i> Open Project
+                    </button>
+                </div>
+
+                <div class="outset-bevel p-3 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 font-bold text-blue-900 mb-1">
+                            <i class="fa-solid fa-cart-shopping text-lg"></i>
+                            <span>Retro E-Commerce</span>
+                        </div>
+                        <p class="text-gray-700 mb-2">Full-stack web store with product search, cart state management, and Stripe checkout.</p>
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            <span class="bg-blue-800 text-white px-1 text-xs">Next.js</span>
+                            <span class="bg-green-800 text-white px-1 text-xs">MongoDB</span>
+                        </div>
+                    </div>
+                    <button class="btn-win w-full mt-2" onclick="playBeep(); alert('Opening Retro E-Commerce Store...');">
+                        <i class="fa-solid fa-terminal"></i> Open Project
+                    </button>
+                </div>
+
+                <div class="outset-bevel p-3 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 font-bold text-blue-900 mb-1">
+                            <i class="fa-solid fa-gamepad text-lg"></i>
+                            <span>Pixel Engine 2D</span>
+                        </div>
+                        <p class="text-gray-700 mb-2">Lightweight 2D browser canvas game engine built with vanilla JavaScript.</p>
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            <span class="bg-yellow-700 text-white px-1 text-xs">HTML5 Canvas</span>
+                            <span class="bg-red-800 text-white px-1 text-xs">JS WebAudio</span>
+                        </div>
+                    </div>
+                    <button class="btn-win w-full mt-2" onclick="playBeep(); alert('Loading Pixel Engine Sandbox...');">
+                        <i class="fa-solid fa-terminal"></i> Open Project
+                    </button>
+                </div>
+
+                <div class="outset-bevel p-3 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 font-bold text-blue-900 mb-1">
+                            <i class="fa-solid fa-cloud text-lg"></i>
+                            <span>DevOps Pipeline GUI</span>
+                        </div>
+                        <p class="text-gray-700 mb-2">Desktop dashboard for monitoring containerized deployments and logs.</p>
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            <span class="bg-blue-900 text-white px-1 text-xs">Docker</span>
+                            <span class="bg-yellow-800 text-white px-1 text-xs">Python</span>
+                        </div>
+                    </div>
+                    <button class="btn-win w-full mt-2" onclick="playBeep(); alert('Starting DevOps Diagnostics...');">
+                        <i class="fa-solid fa-terminal"></i> Open Project
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINDOW: SKILLS -->
+    <div id="win-skills" class="window outset-bevel" style="top: 80px; left: 140px; width: 440px; height: 380px; display: none;">
+        <div class="window-header">
+            <div class="window-title">
+                <i class="fa-solid fa-microchip"></i>
+                <span>Skills Diagnostic Terminal</span>
+            </div>
+            <div class="window-controls">
+                <button class="btn-win window-control-btn" onclick="minimizeWindow('win-skills')">_</button>
+                <button class="btn-win window-control-btn" onclick="maximizeWindow('win-skills')">□</button>
+                <button class="btn-win window-control-btn" onclick="closeWindow('win-skills')">✕</button>
+            </div>
+        </div>
+        <div class="window-body">
+            <p class="mb-2 font-bold">System Capabilities Terminal Output:</p>
+            <div class="inset-bevel p-3 bg-black text-green-400 font-mono text-xs h-64 overflow-y-auto space-y-2">
+                <div>[SYSTEM] Frontend Capabilities:</div>
+                <div class="pl-4">├── HTML5 / CSS3 / Tailwind CSS [PASSED]</div>
+                <div class="pl-4">├── JavaScript (ES6+) / TypeScript [PASSED]</div>
+                <div class="pl-4">└── React.js / Next.js Frameworks [PASSED]</div>
+
+                <div>[SYSTEM] Backend &amp; API Architecture:</div>
+                <div class="pl-4">├── Node.js / Express [PASSED]</div>
+                <div class="pl-4">├── Python / Django / FastAPI [PASSED]</div>
+                <div class="pl-4">└── REST APIs &amp; GraphQL [PASSED]</div>
+
+                <div>[SYSTEM] Databases &amp; DevOps:</div>
+                <div class="pl-4">├── PostgreSQL / MySQL / MongoDB [PASSED]</div>
+                <div class="pl-4">└── Docker / AWS / Vercel [PASSED]</div>
+
+                <div class="text-yellow-400 pt-2">&gt;&gt; Ready to execute high quality software solutions!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINDOW: CONTACT -->
+    <div id="win-contact" class="window outset-bevel" style="top: 100px; left: 180px; width: 420px; height: 360px; display: none;">
+        <div class="window-header">
+            <div class="window-title">
+                <i class="fa-solid fa-envelope"></i>
+                <span>Send Mail Message</span>
+            </div>
+            <div class="window-controls">
+                <button class="btn-win window-control-btn" onclick="minimizeWindow('win-contact')">_</button>
+                <button class="btn-win window-control-btn" onclick="maximizeWindow('win-contact')">□</button>
+                <button class="btn-win window-control-btn" onclick="closeWindow('win-contact')">✕</button>
+            </div>
+        </div>
+        <div class="window-body">
+            <form onsubmit="handleContactSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block mb-1 font-bold">To:</label>
+                    <input type="text" value="alex.dev@domain.com" disabled class="bg-gray-200">
+                </div>
+                <div>
+                    <label class="block mb-1 font-bold">Your Name:</label>
+                    <input type="text" id="contact-name" required placeholder="Jane Doe">
+                </div>
+                <div>
+                    <label class="block mb-1 font-bold">Your Email Address:</label>
+                    <input type="email" id="contact-email" required placeholder="jane@example.com">
+                </div>
+                <div>
+                    <label class="block mb-1 font-bold">Message:</label>
+                    <textarea id="contact-msg" rows="4" required placeholder="Hi Alex, I'd like to work together on a project..."></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="submit" class="btn-win"><i class="fa-solid fa-paper-plane"></i> Send Message</button>
+                    <button type="button" class="btn-win" onclick="closeWindow('win-contact')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- WINDOW: RESUME -->
+    <div id="win-resume" class="window outset-bevel" style="top: 70px; left: 220px; width: 480px; height: 420px; display: none;">
+        <div class="window-header">
+            <div class="window-title">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Resume.txt - WordPad</span>
+            </div>
+            <div class="window-controls">
+                <button class="btn-win window-control-btn" onclick="minimizeWindow('win-resume')">_</button>
+                <button class="btn-win window-control-btn" onclick="maximizeWindow('win-resume')">□</button>
+                <button class="btn-win window-control-btn" onclick="closeWindow('win-resume')">✕</button>
+            </div>
+        </div>
+        <div class="window-body flex flex-col">
+            <div class="inset-bevel p-4 bg-white flex-1 overflow-y-auto font-mono text-xs select-text">
+                <h1 class="text-base font-bold border-b pb-1 mb-2">ALEX DEVELOPER - CURRICULUM VITAE</h1>
+                <p>Email: alex.dev@domain.com | Web: alexdev.io | Location: San Francisco, CA</p>
+                
+                <h2 class="font-bold border-b mt-4 mb-1">SUMMARY</h2>
+                <p>Full-Stack Engineer with 5+ years of experience engineering responsive web applications, modular microservices, and modern frontend interfaces.</p>
+
+                <h2 class="font-bold border-b mt-4 mb-1">EXPERIENCE</h2>
+                <p class="font-bold">Senior Web Engineer - TechCorp Inc. (2022 - Present)</p>
+                <ul class="list-disc list-inside mb-2">
+                    <td>Led redesign of client web platform, boosting site speed by 40%.</td>
+                    <td>Architected API integrations supporting over 500k active monthly users.</td>
+                </ul>
+
+                <p class="font-bold">Frontend Developer - Creative Studio (2019 - 2022)</p>
+                <ul class="list-disc list-inside">
+                    <td>Built interactive UI components and responsive web applications for 20+ clients.</td>
+                </ul>
+
+                <h2 class="font-bold border-b mt-4 mb-1">EDUCATION</h2>
+                <p>B.S. in Computer Science - State University (2015 - 2019)</p>
+            </div>
+            <div class="flex justify-end gap-2 mt-2">
+                <button class="btn-win" onclick="playBeep(); alert('Simulating Resume Download...');"><i class="fa-solid fa-download"></i> Save / Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINDOW: NOTEPAD -->
+    <div id="win-notepad" class="window outset-bevel" style="top: 120px; left: 90px; width: 400px; height: 300px; display: none;">
+        <div class="window-header">
+            <div class="window-title">
+                <i class="fa-solid fa-file-pen"></i>
+                <span>Untitled - Notepad</span>
+            </div>
+            <div class="window-controls">
+                <button class="btn-win window-control-btn" onclick="minimizeWindow('win-notepad')">_</button>
+                <button class="btn-win window-control-btn" onclick="maximizeWindow('win-notepad')">□</button>
+                <button class="btn-win window-control-btn" onclick="closeWindow('win-notepad')">✕</button>
+            </div>
+        </div>
+        <div class="window-body p-0 flex flex-col">
+            <div class="border-b border-gray-400 px-2 py-1 text-xs flex gap-3 bg-gray-200">
+                <span class="cursor-pointer hover:underline">File</span>
+                <span class="cursor-pointer hover:underline">Edit</span>
+                <span class="cursor-pointer hover:underline">Search</span>
+                <span class="cursor-pointer hover:underline">Help</span>
+            </div>
+            <textarea class="w-full h-full flex-1 p-2 border-none outline-none resize-none font-mono text-xs" placeholder="Type your ideas or scratchpad notes here..."></textarea>
+        </div>
+    </div>
+
+    <!-- WINDOW: MINESWEEPER -->
+    <div id="win-minesweeper" class="window outset-bevel" style="top: 90px; left: 260px; width: 232px; height: 300px; display: none;">
+        <div class="window-header">
+            <div class="window-title">
+                <i class="fa-solid fa-bomb"></i>
+                <span>Minesweeper</span>
+            </div>
+            <div class="window-controls">
+                <button class="btn-win window-control-btn" onclick="minimizeWindow('win-minesweeper')">_</button>
+                <button class="btn-win window-control-btn" onclick="closeWindow('win-minesweeper')">✕</button>
+            </div>
+        </div>
+        <div class="window-body flex flex-col items-center justify-center p-2">
+            <div class="outset-bevel w-full p-2 mb-2 flex items-center justify-between bg-gray-300">
+                <div class="inset-bevel px-2 py-1 bg-black text-red-600 font-mono text-base font-bold" id="ms-mines-count">010</div>
+                <button class="btn-win text-lg px-2" id="ms-face-btn" onclick="initMinesweeper()">🙂</button>
+                <div class="inset-bevel px-2 py-1 bg-black text-red-600 font-mono text-base font-bold" id="ms-timer">000</div>
+            </div>
+            <div class="inset-bevel p-1">
+                <div id="ms-grid" class="ms-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINDOW: RECYCLE BIN -->
+    <div id="win-recycle" class="window outset-bevel" style="top: 140px; left: 160px; width: 360px; height: 260px; display: none;">
+        <div class="window-header">
+            <div class="window-title">
+                <i class="fa-solid fa-trash-can"></i>
+                <span>Recycle Bin</span>
+            </div>
+            <div class="window-controls">
+                <button class="btn-win window-control-btn" onclick="minimizeWindow('win-recycle')">_</button>
+                <button class="btn-win window-control-btn" onclick="closeWindow('win-recycle')">✕</button>
+            </div>
+        </div>
+        <div class="window-body flex flex-col items-center justify-center text-center p-4">
+            <i class="fa-solid fa-dumpster-fire text-5xl text-gray-500 mb-3"></i>
+            <p class="font-bold mb-2">Trash Items (0)</p>
+            <p class="text-gray-600 mb-4">No remaining code bugs found! Memory cleaned.</p>
+            <button class="btn-win" onclick="playBeep(); alert('Recycle Bin emptied!');">Empty Recycle Bin</button>
+        </div>
+    </div>
+
+
+    <!-- START MENU -->
+    <div id="start-menu" class="outset-bevel">
+        <div class="start-sidebar">
+            <span>Windows<b>95</b></span>
+        </div>
+        <div class="start-items">
+            <div class="start-item" onclick="openWindow('win-about'); toggleStartMenu();">
+                <i class="fa-solid fa-desktop text-blue-800"></i>
+                <span>About Me</span>
+            </div>
+            <div class="start-item" onclick="openWindow('win-projects'); toggleStartMenu();">
+                <i class="fa-solid fa-folder-open text-yellow-600"></i>
+                <span>Projects Explorer</span>
+            </div>
+            <div class="start-item" onclick="openWindow('win-skills'); toggleStartMenu();">
+                <i class="fa-solid fa-microchip text-teal-700"></i>
+                <span>Skills Diagnostic</span>
+            </div>
+            <div class="start-item" onclick="openWindow('win-minesweeper'); toggleStartMenu();">
+                <i class="fa-solid fa-bomb text-gray-800"></i>
+                <span>Minesweeper</span>
+            </div>
+            <div class="start-item" onclick="openWindow('win-contact'); toggleStartMenu();">
+                <i class="fa-solid fa-envelope text-red-600"></i>
+                <span>Contact Mail</span>
+            </div>
+
+            <div class="start-divider"></div>
+
+            <a href="https://github.com" target="_blank" class="start-item">
+                <i class="fa-brands fa-github text-black"></i>
+                <span>GitHub Profile</span>
+            </a>
+            <a href="https://linkedin.com" target="_blank" class="start-item">
+                <i class="fa-brands fa-linkedin text-blue-600"></i>
+                <span>LinkedIn Profile</span>
+            </a>
+
+            <div class="start-divider"></div>
+
+            <div class="start-item" onclick="shutdownSystem()">
+                <i class="fa-solid fa-power-off text-red-700"></i>
+                <span>Shut Down...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TASKBAR -->
+    <div id="taskbar">
+        <button id="start-btn" class="btn-win" onclick="toggleStartMenu()">
+            <i class="fa-brands fa-windows text-blue-800 text-sm"></i>
+            <span>Start</span>
+        </button>
+
+        <div class="taskbar-tasks" id="taskbar-tasks"></div>
+
+        <div id="system-tray" class="inset-bevel">
+            <i class="fa-solid fa-volume-high text-gray-700 cursor-pointer" onclick="playBeep()"></i>
+            <span id="tray-clock">12:00 PM</span>
+        </div>
+    </div>
+
+    <script>
+        // Web Audio API Retro Sound Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep(freq = 440, duration = 0.08) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        // Global Window Management Logic
+        let zIndexCounter = 100;
+        const openWindows = new Set();
+
+        function openWindow(id) {
+            playBeep(520, 0.05);
+            const win = document.getElementById(id);
+            if (!win) return;
+
+            win.style.display = 'flex';
+            bringToFront(id);
+            openWindows.add(id);
+            renderTaskbar();
+        }
+
+        function closeWindow(id) {
+            playBeep(330, 0.05);
+            const win = document.getElementById(id);
+            if (win) {
+                win.style.display = 'none';
+                openWindows.delete(id);
+                renderTaskbar();
+            }
+        }
+
+        function minimizeWindow(id) {
+            playBeep(280, 0.05);
+            const win = document.getElementById(id);
+            if (win) {
+                win.style.display = 'none';
+                renderTaskbar();
+            }
+        }
+
+        function maximizeWindow(id) {
+            playBeep(600, 0.05);
+            const win = document.getElementById(id);
+            if (!win) return;
+
+            if (win.dataset.maximized === "true") {
+                win.style.top = win.dataset.oldTop || '50px';
+                win.style.left = win.dataset.oldLeft || '50px';
+                win.style.width = win.dataset.oldWidth || '400px';
+                win.style.height = win.dataset.oldHeight || '300px';
+                win.dataset.maximized = "false";
+            } else {
+                win.dataset.oldTop = win.style.top;
+                win.dataset.oldLeft = win.style.left;
+                win.dataset.oldWidth = win.style.width;
+                win.dataset.oldHeight = win.style.height;
+
+                win.style.top = '0px';
+                win.style.left = '0px';
+                win.style.width = '100vw';
+                win.style.height = 'calc(100vh - 30px)';
+                win.dataset.maximized = "true";
+            }
+        }
+
+        function bringToFront(id) {
+            const win = document.getElementById(id);
+            if (!win) return;
+
+            zIndexCounter++;
+            win.style.zIndex = zIndexCounter;
+
+            document.querySelectorAll('.window').forEach(w => w.classList.add('inactive'));
+            win.classList.remove('inactive');
+            renderTaskbar();
+        }
+
+        // Render Active Taskbar Buttons
+        function renderTaskbar() {
+            const container = document.getElementById('taskbar-tasks');
+            container.innerHTML = '';
+
+            openWindows.forEach(id => {
+                const win = document.getElementById(id);
+                if (!win) return;
+
+                const titleText = win.querySelector('.window-title span')?.innerText || 'Application';
+                const isVisible = win.style.display !== 'none' && !win.classList.contains('inactive');
+
+                const btn = document.createElement('button');
+                btn.className = `btn-win taskbar-item ${isVisible ? 'active' : ''}`;
+                btn.innerHTML = `<i class="fa-solid fa-window-maximize text-xs"></i> <span>${titleText}</span>`;
+                
+                btn.onclick = () => {
+                    if (win.style.display === 'none') {
+                        win.style.display = 'flex';
+                        bringToFront(id);
+                    } else if (win.classList.contains('inactive')) {
+                        bringToFront(id);
+                    } else {
+                        minimizeWindow(id);
+                    }
+                };
+
+                container.appendChild(btn);
+            });
+        }
+
+        // Start Menu Toggle
+        function toggleStartMenu() {
+            playBeep(480, 0.05);
+            const menu = document.getElementById('start-menu');
+            const btn = document.getElementById('start-btn');
+            const isHidden = menu.style.display === 'none' || menu.style.display === '';
+
+            menu.style.display = isHidden ? 'flex' : 'none';
+            if (isHidden) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        // Close start menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('start-menu');
+            const btn = document.getElementById('start-btn');
+            if (menu && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.style.display = 'none';
+                btn.classList.remove('active');
+            }
+        });
+
+        // Window Pointer Drag Handling
+        function makeWindowDraggable(win) {
+            const header = win.querySelector('.window-header');
+            if (!header) return;
+
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            header.addEventListener('pointerdown', (e) => {
+                if (e.target.closest('.window-controls')) return;
+                
+                bringToFront(win.id);
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+
+                const rect = win.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+
+                header.setPointerCapture(e.pointerId);
+            });
+
+            header.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                win.style.left = `${Math.max(0, initialLeft + dx)}px`;
+                win.style.top = `${Math.max(0, initialTop + dy)}px`;
+            });
+
+            header.addEventListener('pointerup', (e) => {
+                if (isDragging) {
+                    isDragging = false;
+                    header.releasePointerCapture(e.pointerId);
+                }
+            });
+        }
+
+        document.querySelectorAll('.window').forEach(win => {
+            makeWindowDraggable(win);
+            win.addEventListener('pointerdown', () => bringToFront(win.id));
+        });
+
+        // Contact Form Submission
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            playBeep(650, 0.1);
+            const name = document.getElementById('contact-name').value;
+            alert(`Thank you, ${name}! Your email message has been transmitted successfully.`);
+            closeWindow('win-contact');
+        }
+
+        // CRT Screen Turn-Off Simulation
+        function shutdownSystem() {
+            playBeep(200, 0.3);
+            if (confirm("Are you sure you want to shut down your Windows session?")) {
+                document.body.classList.add('crt-shutdown');
+                setTimeout(() => {
+                    document.body.innerHTML = `
+                        <div style="background: black; color: #ffb000; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: monospace; text-align: center; padding: 20px;">
+                            <h1 style="font-size: 24px; margin-bottom: 10px;">It is now safe to turn off your computer.</h1>
+                            <p style="color: #888;">Click anywhere on screen to restart system.</p>
+                        </div>
+                    `;
+                    document.body.classList.remove('crt-shutdown');
+                    document.body.onclick = () => window.location.reload();
+                }, 600);
+            }
+        }
+
+        // Real-Time System Tray Clock
+        function updateClock() {
+            const clockEl = document.getElementById('tray-clock');
+            if (clockEl) {
+                const now = new Date();
+                clockEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // -------------------------------------------------------------
+        // MINESWEEPER GAME LOGIC
+        // -------------------------------------------------------------
+        const MS_ROWS = 9;
+        const MS_COLS = 9;
+        const MS_MINES = 10;
+        let msBoard = [];
+        let msTimerInterval = null;
+        let msTime = 0;
+
+        function initMinesweeper() {
+            const grid = document.getElementById('ms-grid');
+            const faceBtn = document.getElementById('ms-face-btn');
+            const timerEl = document.getElementById('ms-timer');
+            const countEl = document.getElementById('ms-mines-count');
+
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            msBoard = [];
+            msTime = 0;
+            clearInterval(msTimerInterval);
+            msTimerInterval = null;
+            timerEl.innerText = '000';
+            countEl.innerText = '010';
+            faceBtn.innerText = '🙂';
+
+            for (let r = 0; r < MS_ROWS; r++) {
+                msBoard[r] = [];
+                for (let c = 0; c < MS_COLS; c++) {
+                    msBoard[r][c] = { mine: false, revealed: false, flagged: false, count: 0 };
+                }
+            }
+
+            let planted = 0;
+            while (planted < MS_MINES) {
+                let r = Math.floor(Math.random() * MS_ROWS);
+                let c = Math.floor(Math.random() * MS_COLS);
+                if (!msBoard[r][c].mine) {
+                    msBoard[r][c].mine = true;
+                    planted++;
+                }
+            }
+
+            for (let r = 0; r < MS_ROWS; r++) {
+                for (let c = 0; c < MS_COLS; c++) {
+                    if (msBoard[r][c].mine) continue;
+                    let count = 0;
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            let nr = r + dr, nc = c + dc;
+                            if (nr >= 0 && nr < MS_ROWS && nc >= 0 && nc < MS_COLS && msBoard[nr][nc].mine) {
+                                count++;
+                            }
+                        }
+                    }
+                    msBoard[r][c].count = count;
+                }
+            }
+
+            for (let r = 0; r < MS_ROWS; r++) {
+                for (let c = 0; c < MS_COLS; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'ms-cell outset-bevel';
+                    cell.dataset.r = r;
+                    cell.dataset.c = c;
+
+                    cell.addEventListener('click', () => revealCell(r, c));
+                    cell.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        flagCell(r, c, cell);
+                    });
+
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function startMsTimer() {
+            if (msTimerInterval) return;
+            msTimerInterval = setInterval(() => {
+                msTime++;
+                document.getElementById('ms-timer').innerText = String(Math.min(999, msTime)).padStart(3, '0');
+            }, 1000);
+        }
+
+        function revealCell(r, c) {
+            startMsTimer();
+            const cellData = msBoard[r][c];
+            if (cellData.revealed || cellData.flagged) return;
+
+            const cellEl = document.querySelector(`.ms-cell[data-r='${r}'][data-c='${c}']`);
+            cellData.revealed = true;
+            cellEl.classList.remove('outset-bevel');
+            cellEl.classList.add('revealed');
+
+            if (cellData.mine) {
+                playBeep(180, 0.2);
+                cellEl.innerText = '💣';
+                cellEl.style.backgroundColor = '#ff4d4d';
+                document.getElementById('ms-face-btn').innerText = '😵';
+                clearInterval(msTimerInterval);
+                alert('Game Over! You hit a mine.');
+                revealAllMines();
+                return;
+            }
+
+            playBeep(500, 0.03);
+
+            if (cellData.count > 0) {
+                cellEl.innerText = cellData.count;
+            } else {
+                for (let dr = -1; dr <= 1; dr++) {
+                    for (let dc = -1; dc <= 1; dc++) {
+                        let nr = r + dr, nc = c + dc;
+                        if (nr >= 0 && nr < MS_ROWS && nc >= 0 && nc < MS_COLS && !msBoard[nr][nc].revealed) {
+                            revealCell(nr, nc);
+                        }
+                    }
+                }
+            }
+        }
+
+        function flagCell(r, c, cellEl) {
+            startMsTimer();
+            playBeep(400, 0.04);
+            const cellData = msBoard[r][c];
+            if (cellData.revealed) return;
+
+            cellData.flagged = !cellData.flagged;
+            cellEl.innerText = cellData.flagged ? '🚩' : '';
+        }
+
+        function revealAllMines() {
+            for (let r = 0; r < MS_ROWS; r++) {
+                for (let c = 0; c < MS_COLS; c++) {
+                    if (msBoard[r][c].mine) {
+                        const cellEl = document.querySelector(`.ms-cell[data-r='${r}'][data-c='${c}']`);
+                        cellEl.classList.remove('outset-bevel');
+                        cellEl.classList.add('revealed');
+                        cellEl.innerText = '💣';
+                    }
+                }
+            }
+        }
+
+        // On Load Initialization
+        window.onload = function() {
+            openWindow('win-about');
+            initMinesweeper();
+        };
+    </script>
+</body>
+</html>
